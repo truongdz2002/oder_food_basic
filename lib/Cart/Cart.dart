@@ -302,7 +302,7 @@ class _CartState extends State<Cart> {
             backgroundColor: Colors.orange
         ), child: const Text('Đồng ý'),
         ),
-      ],
+      ],//
     )
     )
         ,style: ElevatedButton.styleFrom(
