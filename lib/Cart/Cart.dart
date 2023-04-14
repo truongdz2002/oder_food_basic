@@ -23,7 +23,6 @@ class _CartState extends State<Cart> {
   TextEditingController edtAddressDelivery=TextEditingController();
   TextEditingController edtNameUser=TextEditingController();
   List<ModuleCart> moduleCartList=[];
-  int ok=0;
   Infor_Oder? infor_oder;
   ModuleCart? moduleCart;
   List<Infor_Oder> inforOderList=[];
@@ -61,7 +60,7 @@ class _CartState extends State<Cart> {
             child: _isLoading
                    ?Skeleton(isLoading:_isLoading, skeleton: SkeletonListView(), child: Container())
                    :ListView(
-                    children: moduleCartList.map((e)
+                    children:moduleCartList.map((e)
                     {
                       //Item List
                       return Item(e);
@@ -171,16 +170,18 @@ class _CartState extends State<Cart> {
       }
     });
   }
-  void DeleteDishInCartUser(String Id) {
+  void DeleteDishInCartUser(ModuleCart e) {
     showDialog(context: context, builder: (context)
     {
       return const  Center(child: const CircularProgressIndicator());
     });
-    ref.child('DishesInCartUser').child(Id).remove().then((value) {
-      Fluttertoast.showToast(msg: 'Xoá món ăn khỏi giỏ hàng thành công', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
+    ref.child('DishesInCartUser').child(e.Id).remove().then((value) {
+      Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thành công', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
       Navigator.of(context).pop();
       Navigator.of(context).pop();
-      ok=1;
+      setState(() {
+        moduleCartList.remove(e);
+      });
     });
   }
   void AddInforDeliveryOfUser()
@@ -202,22 +203,6 @@ class _CartState extends State<Cart> {
     {
       ref.child('Infor_Oder').child(inforOderNew.Id).set(inforOderNew.toJson());
     }
-  }
-  void UpdateListDishesInCartOfUser()
-  {
-    ref.child('DishesInCartUser').onChildRemoved.listen((event) {
-
-      Map<String,dynamic> mapDataRemoved=Map.from(event.snapshot.value as dynamic);
-      ModuleCart moduleCart=ModuleCart.fromSnapShot(mapDataRemoved);
-
-      for(var element in moduleCartList)
-      {
-        if(moduleCart.Id==element.Id)
-        {
-            moduleCartList.remove(element);
-        }
-      }
-    });
   }
   void CheckClickDishes()
   {
@@ -289,20 +274,13 @@ class _CartState extends State<Cart> {
         ) , child: const Text('Hủy bỏ'),),
         ElevatedButton(onPressed:()
         {
-            DeleteDishInCartUser(e.Id);
-            if(ok==1)
-              {
-                setState(() {
-                  moduleCartList.remove(e);
-                  ok=0;
-                });
+            DeleteDishInCartUser(e);
 
-              }//
         },style:ElevatedButton.styleFrom(
             backgroundColor: Colors.orange
         ), child: const Text('Đồng ý'),
         ),
-      ],//
+      ],
     )
     )
         ,style: ElevatedButton.styleFrom(
