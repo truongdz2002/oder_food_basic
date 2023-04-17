@@ -1,16 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:skeletons/skeletons.dart';
 import '../Dishes_find.dart';
 import 'TextSearched.dart';
 class Find_Food extends StatefulWidget {
   const Find_Food({Key? key}) : super(key: key);
-
   @override
   State<Find_Food> createState() => _Find_FoodState();
 }
 
 class _Find_FoodState extends State<Find_Food> {
+  bool isloading=true;
    DatabaseReference ref=FirebaseDatabase.instance.ref();
   final user=FirebaseAuth.instance.currentUser!;
   List<TextSearched> listTextSearched=[];
@@ -18,6 +19,12 @@ class _Find_FoodState extends State<Find_Food> {
   @override
   void initState() {
     GetTextSearched();
+    Future.delayed(Duration(seconds:1),()
+    {
+      setState(() {
+        isloading=false;
+      });
+    });
     super.initState();
   }
   @override
@@ -38,7 +45,9 @@ class _Find_FoodState extends State<Find_Food> {
     ),
     body: Padding(
       padding: const EdgeInsets.only(top: 8.0),
-      child: ListView(
+      child: isloading ? Skeleton(isLoading: true,skeleton: SkeletonListView(),child: Container(),)
+      :
+      ListView(
         children:listTextSearched.map((e)
         {
           return Item(e);
@@ -86,7 +95,7 @@ class _Find_FoodState extends State<Find_Food> {
 
          return;
        }
-       //
+
      }
      ref.child('TextSearched').child(textSearched.Id).set(textSearched.ToJson()).then((value) {
        Navigator.push(context, MaterialPageRoute(builder: (context)=>Dishes_find(textSearched: _strtextSeached)));
@@ -108,7 +117,6 @@ class _Find_FoodState extends State<Find_Food> {
        {
          Map<String,dynamic> mapdata=Map.from(element as dynamic);
          list.add(TextSearched.FromSnapshot(mapdata));
-         listTextSearched=list;
        }
        for(var element in list)
        {
