@@ -27,10 +27,11 @@ class _DishDetailState extends State<DishDetail> {
   @override
   void initState() {
     GetDataDishesInCartOfUser();
-
+    super.initState();
   }
   Future<void> GetDataDishesInCartOfUser()
   async {
+    List<ModuleCart> list=[];
     await  ref.child('DishesInCartUser').onValue.listen((event) {
       final Map<Object?, Object?> data = event.snapshot.value as Map<Object?, Object?>;
       final List<Object?>listData = data.values.toList();
@@ -38,8 +39,15 @@ class _DishDetailState extends State<DishDetail> {
       for(var elemment in nonNullableList)
       {
         Map<String,dynamic> mapData=Map.from(elemment as dynamic);
-        moduleCartList.add(ModuleCart.fromSnapShot(mapData));
+        list.add(ModuleCart.fromSnapShot(mapData));
       }
+      for(var element in list)
+        {
+          if(element.uidUser==user.uid)
+            {
+              moduleCartList.add(element);
+            }
+        }
     });
   }
   void PushDataDishUserWantToBuy(int quantity,Dish dish)
@@ -121,7 +129,7 @@ class _DishDetailState extends State<DishDetail> {
                                         backgroundColor: Colors.white,
                                           minimumSize:const Size(30, 30),
                                           elevation: 4
-                                      ), child:Icon(Icons.add,color: Colors.black),),
+                                      ), child:Icon(Icons.remove,color: Colors.black),),
                                     ),
 
                                         Container(
@@ -168,7 +176,27 @@ class _DishDetailState extends State<DishDetail> {
                                     backgroundColor: Colors.orange
                                 ), child: const Text('Hủy bỏ'),
                               ),
-                              ElevatedButton(onPressed: ()=>PushDataDishUserWantToBuy(viewQuantity, dataDish),
+                              ElevatedButton(onPressed: ()
+                                  {
+                                    for(var element in moduleCartList)
+                                      {
+                                        if(element.dish.nameDish==dataDish.nameDish)
+                                          {
+                                            Fluttertoast.showToast(
+                                                msg:'Món ăn đã có trong giỏ hàng  ',
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.BOTTOM,
+                                                timeInSecForIosWeb: 1,
+                                                fontSize: 16,
+                                                backgroundColor: Colors.grey,
+                                                textColor: Colors.black
+                                            );
+                                            Navigator.pop(context);
+                                            return;
+                                          }
+                                      }
+                                    PushDataDishUserWantToBuy(viewQuantity, dataDish);
+                                  },
                                   style:ElevatedButton.styleFrom(
                                       backgroundColor: Colors.orange
                                   ), child: const Text('Thêm vào giỏ hàng')),

@@ -31,16 +31,17 @@ class _CartState extends State<Cart> {
     int txtTotalMoneyDish=0;
     int  viewQuantity=1;
     int id=0;
+    int oK=0;
     String messageNotification='';
     final RequestPermissionDevice requestPermissionDevice=RequestPermissionDevice();
     TextEditingController edtViewQuantity=TextEditingController();
-    final DatabaseReference ref=FirebaseDatabase.instance.ref();
+     DatabaseReference ref=FirebaseDatabase.instance.ref();
   @override
   void initState() {
     GetDataDishesInCartOfUser();
     GetInforOderOfUser();
     requestPermissionDevice.Intialize();
-    Future.delayed(const Duration(seconds: 3),()
+    Future.delayed(const Duration(milliseconds: 200),()
     {
           setState(() {
             _isLoading=false;
@@ -60,12 +61,8 @@ class _CartState extends State<Cart> {
             child: _isLoading
                    ?Skeleton(isLoading:_isLoading, skeleton: SkeletonListView(), child: Container())
                    :ListView(
-                    children:moduleCartList.map((e)
-                    {
-                      //Item List
-                      return Item(e);
-                    }).toList(),
-                  ),
+              children: moduleCartList.map((e) {return Item(e);}).toList(),
+            )
                 ),
            //Progress Oder
            Container(
@@ -170,19 +167,32 @@ class _CartState extends State<Cart> {
       }
     });
   }
-  void DeleteDishInCartUser(ModuleCart e) {
+
+  Future<void> DeleteDishInCartUser(ModuleCart e) async {
     showDialog(context: context, builder: (context)
     {
       return const  Center(child: const CircularProgressIndicator());
     });
-    ref.child('DishesInCartUser').child(e.Id).remove().then((value) {
-      Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thành công', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      setState(() {
-        moduleCartList.remove(e);
-      });
-    });
+
+     await ref.child('DishesInCartUser').remove().then((_)
+     {
+       Navigator.of(context).pop();
+       Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thành công', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
+       Navigator.of(context).pop();
+       setState((){});
+       Future.delayed(const Duration(milliseconds: 100),()
+       {
+         setState(() {
+           moduleCartList.remove(e);
+         });
+       });
+
+     }).catchError((_){
+       Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thất bại ', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
+       Navigator.of(context).pop();
+       Navigator.of(context).pop();
+     });
+    
   }
   void AddInforDeliveryOfUser()
   {
@@ -275,6 +285,7 @@ class _CartState extends State<Cart> {
         ElevatedButton(onPressed:()
         {
             DeleteDishInCartUser(e);
+            //UpdateListDishesCart(index);
 
         },style:ElevatedButton.styleFrom(
             backgroundColor: Colors.orange

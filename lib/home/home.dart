@@ -28,7 +28,7 @@ class _homeState extends State<home> {
     getDataDishRealTimeDataBase();
     if(dishList.isEmpty)
     {
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(milliseconds: 500), () {
         setState((){
           _isLoading = false;
         });

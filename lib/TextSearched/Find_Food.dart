@@ -19,7 +19,7 @@ class _Find_FoodState extends State<Find_Food> {
   @override
   void initState() {
     GetTextSearched();
-    Future.delayed(Duration(seconds:1),()
+    Future.delayed(const Duration(milliseconds:300),()
     {
       setState(() {
         isloading=false;
