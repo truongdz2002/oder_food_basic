@@ -33,6 +33,7 @@ class _DishDetailState extends State<DishDetail> {
   async {
     List<ModuleCart> list=[];
     await  ref.child('DishesInCartUser').onValue.listen((event) {
+      if(event.snapshot.value==null) return;
       final Map<Object?, Object?> data = event.snapshot.value as Map<Object?, Object?>;
       final List<Object?>listData = data.values.toList();
       List<Object> nonNullableList = listData.where((element) => element != null).toList().cast<Object>() ;

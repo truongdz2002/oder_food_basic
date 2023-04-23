@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:oder_food/ModuleBillOderFood.dart';
 import 'package:oder_food/RequestPermission/RequestPermissionDevice.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:intl/intl.dart';
-import '../Dish/Dish.dart';
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -38,8 +38,8 @@ class _CartState extends State<Cart> {
      DatabaseReference ref=FirebaseDatabase.instance.ref();
   @override
   void initState() {
-    GetDataDishesInCartOfUser();
-    GetInforOderOfUser();
+    getDataDishesInCartOfUser();
+    getInforOderOfUser();
     requestPermissionDevice.Intialize();
     Future.delayed(const Duration(milliseconds: 200),()
     {
@@ -61,7 +61,7 @@ class _CartState extends State<Cart> {
             child: _isLoading
                    ?Skeleton(isLoading:_isLoading, skeleton: SkeletonListView(), child: Container())
                    :ListView(
-              children: moduleCartList.map((e) {return Item(e);}).toList(),
+                    children: moduleCartList.map((e) {return item(e);}).toList(),
             )
                 ),
            //Progress Oder
@@ -100,10 +100,10 @@ class _CartState extends State<Cart> {
                        else
                          {
                            //Show AlerDialog Get Infor Oder
-                           showDialog<String>(context: context, builder: (context)=>AlertDialogAddInforbuyOder());
+                           showDialog<String>(context: context, builder: (context)=>alertDialogAddInforbuyOder());
                          }
 
-                       SetdataInforUserOder();
+                       setdataInforUserOder();
                      },
                        style: ElevatedButton.styleFrom(
                          backgroundColor: Colors.orange
@@ -123,15 +123,15 @@ class _CartState extends State<Cart> {
       )
     );
   }
-  void PushBillOderCreated()
+  void pushBillOderCreated()
   {
     showDialog(context: context, builder: (context)
     {
-      return const  Center(child: const CircularProgressIndicator());
+      return const  Center(child:  CircularProgressIndicator());
     });
     String formattedDate = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
     Infor_Oder inforOderNew=Infor_Oder(Id:DateTime.now().microsecondsSinceEpoch.toString(), Uid:user.uid, NameUser:edtNameUser.text, TelephoneDelevery:edtPhoneNumber.text, AddressDelevery: edtAddressDelivery.text);
-    ModuleBillOderFood moduleBillOderFood=ModuleBillOderFood(Id:DateTime.now().microsecondsSinceEpoch.toString(), moduleCart:moduleCart!, dateOder:formattedDate, infor_oder: inforOderNew, totalPayment: moduleCart!.dish!.priceDish, methodsPayment: 'Tiền mặt');
+    ModuleBillOderFood moduleBillOderFood=ModuleBillOderFood(Id:DateTime.now().microsecondsSinceEpoch.toString(), moduleCart:moduleCart!, dateOder:formattedDate, infor_oder: inforOderNew, totalPayment: moduleCart!.dish.priceDish, methodsPayment: 'Tiền mặt');
     ref.child('BillOderCreated').child(moduleBillOderFood.Id).set(moduleBillOderFood.toJson()).then((value)
     {
       id=id+1;
@@ -142,9 +142,10 @@ class _CartState extends State<Cart> {
       Navigator.of(context).pop();
     });
   }
-  Future<void> GetDataDishesInCartOfUser()
+  Future<void> getDataDishesInCartOfUser()
   async {
     List<ModuleCart> list=[];
+    List<ModuleCart> listNew=[];
     ref.child('DishesInCartUser').onValue.listen((event) {
       if(event.snapshot.value==null)
       {
@@ -162,39 +163,35 @@ class _CartState extends State<Cart> {
       {
         if(element.uidUser==user.uid)
         {
-          moduleCartList.add(element);
+          listNew.add(element);
         }
       }
+      setState(() {
+        moduleCartList=listNew;
+      });
     });
   }
 
-  Future<void> DeleteDishInCartUser(ModuleCart e) async {
+  Future<void> deleteDishInCartUser(ModuleCart e) async {
     showDialog(context: context, builder: (context)
     {
-      return const  Center(child: const CircularProgressIndicator());
+      return const  Center(child: CircularProgressIndicator());
     });
-
-     await ref.child('DishesInCartUser').remove().then((_)
+     await ref.child('DishesInCartUser').child(e.Id).remove().then((_)
      {
        Navigator.of(context).pop();
        Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thành công', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
-       Navigator.of(context).pop();
-       setState((){});
-       Future.delayed(const Duration(milliseconds: 100),()
-       {
-         setState(() {
-           moduleCartList.remove(e);
-         });
+       setState(() {
+         moduleCartList.clear();
        });
+       getDataDishesInCartOfUser();
 
      }).catchError((_){
        Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thất bại ', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
        Navigator.of(context).pop();
-       Navigator.of(context).pop();
      });
-    
   }
-  void AddInforDeliveryOfUser()
+  void addInforDeliveryOfUser()
   {
     Infor_Oder inforOderNew=Infor_Oder(Id:DateTime.now().microsecondsSinceEpoch.toString(), Uid:user.uid, NameUser:edtNameUser.text, TelephoneDelevery:edtPhoneNumber.text, AddressDelevery: edtAddressDelivery.text);
     if(inforOderNew.AddressDelevery.isEmpty || inforOderNew.TelephoneDelevery.isEmpty || inforOderNew.NameUser.isEmpty)
@@ -214,11 +211,7 @@ class _CartState extends State<Cart> {
       ref.child('Infor_Oder').child(inforOderNew.Id).set(inforOderNew.toJson());
     }
   }
-  void CheckClickDishes()
-  {
-
-  }
-  void SetdataInforUserOder()
+  void setdataInforUserOder()
   {
     for(var element in inforOderList)
     {
@@ -231,7 +224,7 @@ class _CartState extends State<Cart> {
       }
     }
   }
-  void GetInforOderOfUser()
+  void getInforOderOfUser()
   {
     ref.child('Infor_Oder').onValue.listen((event) {
       if(event.snapshot.value==null)
@@ -248,7 +241,7 @@ class _CartState extends State<Cart> {
       }
     });
   }
-  Widget ProgressDeleteItemInCart(ModuleCart e)=>Container(
+  Widget progressDeleteItemInCart(ModuleCart e)=>Container(
     margin: const EdgeInsets.only(left: 40),
     child: ElevatedButton(onPressed: ()=> showDialog<String>
       (context: context, builder: (context)=>AlertDialog(
@@ -284,8 +277,8 @@ class _CartState extends State<Cart> {
         ) , child: const Text('Hủy bỏ'),),
         ElevatedButton(onPressed:()
         {
-            DeleteDishInCartUser(e);
-            //UpdateListDishesCart(index);
+            Navigator.of(context).pop();
+            deleteDishInCartUser(e);
 
         },style:ElevatedButton.styleFrom(
             backgroundColor: Colors.orange
@@ -303,16 +296,16 @@ class _CartState extends State<Cart> {
             color: Colors.white
         ),)),
   );
-   Widget AlertDialogAddInforbuyOder()=>AlertDialog(
-     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.orange, width: 4)),
-     title: Container(alignment: Alignment.center, decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.orange, width: 2))
+   Widget alertDialogAddInforbuyOder()=>AlertDialog(
+     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: Colors.orange, width: 4)),
+     title: Container(alignment: Alignment.center, decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.orange, width: 2))
      ),
-       child: Text('Thông tin giao hàng',style: TextStyle(
+       child: const Text('Thông tin giao hàng',style: TextStyle(
            fontSize: 16,
            fontWeight: FontWeight.bold
        ),),
      ),
-     content: Container(
+     content: SizedBox(
        height: 300,
        child: SingleChildScrollView(
          child: Column(
@@ -392,13 +385,13 @@ class _CartState extends State<Cart> {
              ),
              ElevatedButton(onPressed:()
              {
-               AddInforDeliveryOfUser();
-               PushBillOderCreated();
+               addInforDeliveryOfUser();
+               pushBillOderCreated();
              },style: ElevatedButton.styleFrom(
                  backgroundColor: Colors.orange,
                  elevation: 4
              ), child:
-             Text('Xác nhận', style: TextStyle(
+             const Text('Xác nhận', style: TextStyle(
                  fontWeight: FontWeight.bold,
                  fontSize: 16,
                  color: Colors.white
@@ -410,7 +403,7 @@ class _CartState extends State<Cart> {
        ),
      ),
    );
-  Widget Item(ModuleCart e) =>GestureDetector(
+  Widget item(ModuleCart e) =>GestureDetector(
     onTap: ()
     {
       setState(() {
@@ -470,7 +463,7 @@ class _CartState extends State<Cart> {
                     )
                   ],
                 ),
-                ProgressDeleteItemInCart(e),
+                progressDeleteItemInCart(e),
               ],
             ),
 
