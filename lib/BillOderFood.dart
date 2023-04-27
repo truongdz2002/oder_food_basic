@@ -50,7 +50,7 @@ class BillOderFood extends StatelessWidget {
                       color: Colors.black),
                     ),
                   ),
-                  Text(moduleBillOderFood.Id,style: const TextStyle(
+                  Text(moduleBillOderFood.id,style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),

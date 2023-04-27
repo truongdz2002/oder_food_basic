@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -39,13 +38,14 @@ class _homeState extends State<home> {
   Future<void> getDataDishRealTimeDataBase()
   async {
     List<Dish> dishes = [];
-    await ref.child('dishes').onValue.listen((event) {
+    ref.child('dishes').onValue.listen((event) {
         List<Object?> a=event.snapshot.value as List<Object?>;
         List<Object> nonNullableList = a.where((element) => element != null).toList().cast<Object>() ;
         for (var element in nonNullableList) {
           Map<String, dynamic> map = Map.from(element as dynamic);
           dishes.add(Dish.fromSnapshot(map));
           dishList=dishes;
+          dishList.sort((a,b)=>b.amountBuyDish.compareTo(a.amountBuyDish));
         }
     });
   }
@@ -67,9 +67,10 @@ class _homeState extends State<home> {
                         child: Column(
                           children: [
                             CarouselSlider.builder(carouselController:controller ,
-                                itemCount: 6, itemBuilder:(context, index, realIndex)
+                                itemCount:6, itemBuilder:(context, index, realIndex)
                                 {
-                                  final String  urlImage=dishList[index].urlImageDish;
+                                  String  urlImage;
+                                  dishList.isEmpty ? urlImage ='':urlImage=dishList[index].urlImageDish;
                                   return buildImages(urlImage , index);
                                 }, options: CarouselOptions(
                                     height: 200,

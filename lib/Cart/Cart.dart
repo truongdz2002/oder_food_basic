@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -57,7 +56,7 @@ class _CartState extends State<Cart> {
         children: [
           //List Dishes In Cart Of User
           SizedBox(
-            height: 630,
+            height: 605,
             child: _isLoading
                    ?Skeleton(isLoading:_isLoading, skeleton: SkeletonListView(), child: Container())
                    :ListView(
@@ -67,6 +66,7 @@ class _CartState extends State<Cart> {
            //Progress Oder
            Container(
              color: Colors.green,
+             margin: const EdgeInsets.only(bottom:12),
              child: Padding(
                padding: const EdgeInsets.all(8.0),
                child: Row(
@@ -89,31 +89,28 @@ class _CartState extends State<Cart> {
                      ),
                      ),
                    ),
-                   Container(
-                     margin: const EdgeInsets.only(left:5),
-                     child: ElevatedButton(onPressed:(){
-                       if(moduleCart==null)
+                   ElevatedButton(onPressed:(){
+                     if(moduleCart==null)
+                     {
+                       Fluttertoast.showToast(msg: 'Bạn chưa chọn món ăn để đặt hàng', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
+                       return;
+                     }
+                     else
                        {
-                         Fluttertoast.showToast(msg: 'Bạn chưa chọn món ăn để đặt hàng', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
-                         return;
+                         //Show AlerDialog Get Infor Oder
+                         showDialog<String>(context: context, builder: (context)=>alertDialogAddInforbuyOder());
                        }
-                       else
-                         {
-                           //Show AlerDialog Get Infor Oder
-                           showDialog<String>(context: context, builder: (context)=>alertDialogAddInforbuyOder());
-                         }
 
-                       setdataInforUserOder();
-                     },
-                       style: ElevatedButton.styleFrom(
-                         backgroundColor: Colors.orange
-                       ), child:const Text('Đặt hàng',style:TextStyle(
-                       fontSize: 16,
-                       fontWeight: FontWeight.bold,
-                       color: Colors.white
-                     )
-                     ),
-                     ),
+                     setdataInforUserOder();
+                   },
+                     style: ElevatedButton.styleFrom(
+                       backgroundColor: Colors.orange
+                     ), child:const Text('Đặt hàng',style:TextStyle(
+                     fontSize: 16,
+                     fontWeight: FontWeight.bold,
+                     color: Colors.white
+                   )
+                   ),
                    )
                  ],
                ),
@@ -131,14 +128,22 @@ class _CartState extends State<Cart> {
     });
     String formattedDate = DateFormat('dd-MM-yyyy kk:mm:ss').format(DateTime.now());
     Infor_Oder inforOderNew=Infor_Oder(Id:DateTime.now().microsecondsSinceEpoch.toString(), Uid:user.uid, NameUser:edtNameUser.text, TelephoneDelevery:edtPhoneNumber.text, AddressDelevery: edtAddressDelivery.text);
-    ModuleBillOderFood moduleBillOderFood=ModuleBillOderFood(Id:DateTime.now().microsecondsSinceEpoch.toString(), moduleCart:moduleCart!, dateOder:formattedDate, infor_oder: inforOderNew, totalPayment: moduleCart!.dish.priceDish, methodsPayment: 'Tiền mặt');
-    ref.child('BillOderCreated').child(moduleBillOderFood.Id).set(moduleBillOderFood.toJson()).then((value)
+    ModuleBillOderFood moduleBillOderFood=ModuleBillOderFood(id:DateTime.now().microsecondsSinceEpoch.toString(), moduleCart:moduleCart!, dateOder:formattedDate, infor_oder: inforOderNew, totalPayment: moduleCart!.dish.priceDish, methodsPayment: 'Tiền mặt',view:false);
+    ref.child('BillOderCreated').child(moduleBillOderFood.id).set(moduleBillOderFood.toJson()).then((value)
     {
       id=id+1;
       messageNotification='Bạn đã đặt thành công món  ${moduleBillOderFood.moduleCart.dish.nameDish} ,${moduleBillOderFood.moduleCart.quantity} suất với tổng tiền là ${moduleBillOderFood.totalPayment} VND ';
       Fluttertoast.showToast(msg: 'Đặt hàng  thành công', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
       requestPermissionDevice.ShowNotification(id: id, title:'Đặt hàng thành công', body: messageNotification);
-      Navigator.of(context).pop();
+      updateAmountBuyDish();
+    });
+  }
+  void updateAmountBuyDish()
+  {
+    int amount=moduleCart!.quantity+moduleCart!.dish.amountBuyDish;
+    ref.child('dishes').child(moduleCart!.dish.Id).update({'amountBuyDish':amount}).whenComplete(()
+    {
+      deleteDishInCartUser(moduleCart!);
       Navigator.of(context).pop();
     });
   }
@@ -179,12 +184,12 @@ class _CartState extends State<Cart> {
     });
      await ref.child('DishesInCartUser').child(e.Id).remove().then((_)
      {
-       Navigator.of(context).pop();
        Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thành công', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
        setState(() {
          moduleCartList.clear();
        });
        getDataDishesInCartOfUser();
+       Navigator.of(context).pop();
 
      }).catchError((_){
        Fluttertoast.showToast(msg:'Xoá món ăn khỏi giỏ hàng thất bại ', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, fontSize: 16, backgroundColor: Colors.grey, textColor: Colors.black);
@@ -385,6 +390,7 @@ class _CartState extends State<Cart> {
              ),
              ElevatedButton(onPressed:()
              {
+               Navigator.of(context).pop();
                addInforDeliveryOfUser();
                pushBillOderCreated();
              },style: ElevatedButton.styleFrom(

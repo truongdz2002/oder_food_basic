@@ -25,12 +25,12 @@ class _SlashScreenState extends State<SlashScreen> {
     Timer(const Duration(seconds: 3), () {
       if(user==null)
       {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Login()));
 
       }
       else
       {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Home()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Home()));
       }
     });
   }
@@ -40,12 +40,14 @@ class _SlashScreenState extends State<SlashScreen> {
       backgroundColor: Colors.white,
       body:Center(
         child: Container(
+          color: Colors.white,
           height: 160,
-          child: FittedBox(
+          child: const FittedBox(
             child: CircleAvatar(
               backgroundImage: AssetImage(
                 'assets/logo_oder_food.png'
               ),
+              backgroundColor: Colors.transparent,
             ),
           ),
         ),

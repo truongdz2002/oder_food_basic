@@ -70,65 +70,73 @@ class _transaction_HistoryState extends State<transaction_History> {
                 return GestureDetector(
                   onTap:()
                   {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>BillOderFood(moduleBillOderFood: e)));
+                    ref.child('BillOderCreated').child(e.id).update({'View':true}).whenComplete(() {
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=>BillOderFood(moduleBillOderFood: e)));
+                    });
                   },
                   child: Card(
-                   child:Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.all(15),
-                              child: SizedBox(
-                                height: 60,
-                                child: FittedBox(
-                                  child: CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                        'assets/logo_oder_food.png'
+                   child:Container(
+                     decoration: BoxDecoration(
+                         color:e.view ? const Color(0x88888888) :Colors.white,
+                         borderRadius: BorderRadius.circular(5)
+                     ),
+                     child: Row(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(15),
+                                child: SizedBox(
+                                  height: 60,
+                                  child: FittedBox(
+                                    child: CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          'assets/logo_oder_food.png'
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(e.dateOder,style: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 16,
-                                        color: Colors.black
-                                    ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                   Padding(
-                                     padding: const EdgeInsets.all(4.0),
-                                     child: Text('Thực đơn:${e.moduleCart.dish.nameDish}',style:const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),),
-                                   ),
-                                ],
-                                ),
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Text('Giá :${NumberFormat.decimalPattern().format(e.moduleCart.dish.priceDish).replaceAll(',','.')} VND',style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                )
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(e.dateOder,style: const TextStyle(
+                                          fontWeight: FontWeight.normal,
                                           fontSize: 16,
-                                          color: Colors.orange
+                                          color: Colors.black
                                       ),
                                       ),
-                                    ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                     Padding(
+                                       padding: const EdgeInsets.all(4.0),
+                                       child: Text('Thực đơn:${e.moduleCart.dish.nameDish}',style:const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),),
+                                     ),
                                   ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Text('Giá :${NumberFormat.decimalPattern().format(e.moduleCart.dish.priceDish).replaceAll(',','.')} VND',style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: Colors.orange
+                                        ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                   ),
                   ),
                 );
             }).toList() ,

@@ -1,17 +1,14 @@
+import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:oder_food/Cart/Cart.dart';
-import 'package:oder_food/RequestPermission/RequestPermissionDevice.dart';
 import 'package:oder_food/TextSearched/Find_Food.dart';
 import 'package:oder_food/contact.dart';
 import 'package:oder_food/feedBack.dart';
 import 'package:oder_food/transaction_History.dart';
-
 import 'SignIn_SignOut_Login/Login.dart';
-import 'Dish/Dish.dart';
 import 'home/home.dart';
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -21,11 +18,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool ischangebackground=true;
+  bool isChangeBackground=true;
   final auth=FirebaseAuth.instance;
   final user=FirebaseAuth.instance.currentUser!;
   final googleSignIn=GoogleSignIn();
   late int indexPage=0;
+  int index=0;
   final List<Widget> _page=[
     const home(),
     const Cart(),
@@ -38,49 +36,67 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
   }
+  Widget buttonTwo(){
+    return FloatingActionButton(
+      onPressed: (){
+      },
+      focusElevation: 16.0,
+      focusColor: Colors.yellow,
+      heroTag: 'information oder',
+      elevation: 2.0,
+      child: const Icon(Icons.contact_mail_outlined,color: Colors.white,),
+    );
+  }
+  Future<void> signout()
+  async {
+    showDialog(context: context, builder: (context){
+      return const CircularProgressIndicator();
+    });
+    try {
+      await auth.signOut().whenComplete(() {
+        Navigator.pop(context);
+      });
+      await googleSignIn.signOut();
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
+    } catch (error) {
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    Future<void> Sigout()
-    async {
-      try {
-        await auth.signOut();
-        await googleSignIn.signOut();
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
-      } catch (error) {
-        print("Đã xảy ra lỗi: $error");
-      }
-    }
     return  Scaffold(
       backgroundColor:Colors.white,
       appBar:AppBar(
-        backgroundColor: ischangebackground ? Colors.white : Colors.orange,
+        backgroundColor: isChangeBackground ? Colors.white : Colors.orange,
           elevation: 0,
         title:getAppBarTitle(),
         centerTitle: true,
       ),
       body: _page[indexPage],
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.orange,
-        type: BottomNavigationBarType.shifting,
-        currentIndex: indexPage,
+      floatingActionButton:isChangeBackground? AnimatedFloatingActionButton(animatedIconData: AnimatedIcons.view_list,
+      fabButtons: [
+        processLogout(),
+        buttonTwo(),
+      ],
+       colorStartAnimation: Colors.blueAccent,
+       colorEndAnimation: Colors.orange,):null,
+      bottomNavigationBar:CurvedNavigationBar(
         onTap:selectIndexPage ,
-        backgroundColor:Theme.of(context).primaryColor,
+        backgroundColor:Colors.blueAccent,
+        animationDuration: const Duration(milliseconds:400),
+
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-              label:"Trang chủ",
-             ),
-          BottomNavigationBarItem(icon:Icon(Icons.shopping_cart),label:"Giỏ hàng "),
-          BottomNavigationBarItem(icon:Icon(Icons.feed),label:"Phản hồi "),
-          BottomNavigationBarItem(icon:Icon(Icons.account_box_sharp),label:"Liên hệ "),
-          BottomNavigationBarItem(icon:Icon(Icons.history),label:"Lịch sử giao dịch")
+           Icon(Icons.home,color: Colors.orange,),
+           Icon(Icons.shopping_cart,color: Colors.orange,),
+           Icon(Icons.feed,color: Colors.orange,),
+           Icon(Icons.account_box_sharp,color: Colors.orange,),
+           Icon(Icons.history,color: Colors.orange,),
         ],
       ),
 
     );
   }
-  Widget TiltelSearchAppBar()=>InkWell(
+
+  Widget tiltelSearchAppBar()=>InkWell(
     onTap: ()
     {
       Navigator.push(context, MaterialPageRoute(builder: (context)=>const Find_Food()));
@@ -91,9 +107,9 @@ class _HomeState extends State<Home> {
           border: Border.all(color: Colors.orange,width: 1.4),
           borderRadius: BorderRadius.circular(25)),
       child: Row(
-        children: [
+        children: const [
           Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: EdgeInsets.all(4.0),
             child: Icon(Icons.search,color: Colors.grey),
           ),
           Center(
@@ -107,21 +123,21 @@ class _HomeState extends State<Home> {
       ),
     ),
   );
-  Widget SetTittleText(String text)=> Text(text,style: const TextStyle(
+  Widget setTittleText(String text)=> Text(text,style: const TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.bold,
       fontSize: 18
   ),);
-  void ChangeBackgroundTitleWhite()
+  void changeBackgroundTitleWhite()
   {
     setState(() {
-      ischangebackground=true;
+      isChangeBackground=true;
     });
   }
-  void ChangeBackgroundTitleOrange()
+  void changeBackgroundTitleOrange()
   {
     setState(() {
-      ischangebackground=false;
+      isChangeBackground=false;
     });
   }
   void selectIndexPage(int index)
@@ -133,35 +149,35 @@ class _HomeState extends State<Home> {
     {
       case 0: setState(() {
         setState(() {
-          ischangebackground=true;
+          isChangeBackground=true;
         });
       });
       break;
       case 1:
         setState(() {
           setState(() {
-            ischangebackground=false;
+            isChangeBackground=false;
           });
         });
         break;
       case 2:
         setState(() {
           setState(() {
-            ischangebackground=false;
+            isChangeBackground=false;
           });
         });
         break;
       case 3:
         setState(() {
           setState(() {
-            ischangebackground=false;
+            isChangeBackground=false;
           });
         });
         break;
       case 4:
         setState(() {
           setState(() {
-            ischangebackground=false;
+            isChangeBackground=false;
           });
         });
         break;
@@ -170,17 +186,69 @@ class _HomeState extends State<Home> {
   Widget getAppBarTitle() {
     switch (indexPage) {
       case 0:
-        return TiltelSearchAppBar();
+        return tiltelSearchAppBar();
       case 1:
-        return SetTittleText('Giỏ hàng');
+        return setTittleText('Giỏ hàng');
       case 2:
-        return SetTittleText("Phản hồi");
+        return setTittleText("Phản hồi");
       case 3:
-        return SetTittleText("Phản hồi");
+        return setTittleText("Liên hệ ");
       case 4:
-        return SetTittleText("Lịch sử giao dịch");
+        return setTittleText("Lịch sử giao dịch");
       default:
-        return TiltelSearchAppBar();
+        return tiltelSearchAppBar();
     }
   }
+  Widget processLogout()=> Container(
+    margin: const EdgeInsets.only(left: 40),
+    child: FloatingActionButton(onPressed: ()=> showDialog<String>
+      (context: context, builder: (context)=>AlertDialog(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10) ),
+          side:BorderSide(
+              color: Colors.orange,
+              width: 1
+          )
+      ),
+      title: Container(
+        decoration: const BoxDecoration(
+            border: Border(
+                bottom: BorderSide(
+                    color: Colors.orange,
+                    width: 1
+                )
+            )
+        ),
+        alignment: Alignment.center,
+        child: const Text('Thông báo'),
+      ),
+      content: Container(
+        height: 50,
+        alignment: Alignment.center,
+        child: const Text('Bạn chắc chắn muốn đăng xuất'),
+      ),
+      actions: [
+        ElevatedButton(onPressed:(){
+          Navigator.of(context).pop();
+        },style:ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange
+        ) , child: const Text('Hủy bỏ'),),
+        ElevatedButton(onPressed:()
+        {
+          Navigator.of(context).pop();
+          signout();
+        },style:ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange
+        ), child: const Text('Đồng ý'),
+        ),
+      ],
+    )
+    ),
+        focusColor: Colors.yellow,
+        focusElevation: 16.0,
+        heroTag: 'signOut',
+        elevation: 2.0,
+        child: const Icon(Icons.login_outlined,color: Colors.white,)
+    ),
+  );
 }
