@@ -33,7 +33,6 @@ class _homeState extends State<home> {
         });
       });
     }
-
   }
   Future<void> getDataDishRealTimeDataBase()
   async {
@@ -106,7 +105,7 @@ class _homeState extends State<home> {
                             ),
                             children:dishList.map((item)
                             {
-                              return Item(item);
+                              return items(item);
                             }).toList(),
                           )
                       )
@@ -128,8 +127,12 @@ class _homeState extends State<home> {
   );
 
   void animateToSlide(int index) => controller.animateToPage(index);
-  Widget buildImages(String urlimage,int index)=>Image.network(urlimage,fit: BoxFit.cover);
-  Widget Item(Dish item)=>GestureDetector(
+  Widget buildImages(String urlimage,int index)=>FadeInImage(
+    placeholder: const AssetImage('assets/TRA-SUA-HOKKAIDOU.jpg'),
+    image: NetworkImage(urlimage),
+    fit: BoxFit.cover,
+  );
+  Widget items(Dish item)=>GestureDetector(
     onTap: ()
     {
       Navigator.push(context, MaterialPageRoute(builder: (context)=>const DishDetail(),settings: RouteSettings(
