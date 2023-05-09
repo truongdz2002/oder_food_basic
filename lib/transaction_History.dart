@@ -67,17 +67,22 @@ class _transaction_HistoryState extends State<transaction_History> {
   Widget build(BuildContext context) {
     return  Scaffold(
       body: billOderFoodList.isEmpty ?
-              SizedBox(
-                  child: Column(
-                    children: const [
-                      Icon(Icons.feed,size: 200,color: Colors.grey,),
-                      Text('Bạn chưa có hóa đơn nào',style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey
-                      ),)
-                    ],
-                  ),
+              Center(
+                child: SizedBox(
+                    child: Column(
+                      children: const [
+                        SizedBox(
+                          height:150,
+                        ),
+                        Icon(Icons.feed,size: 200,color: Colors.grey,),
+                        Text('Bạn chưa có hóa đơn nào',style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey
+                        ),)
+                      ],
+                    ),
+                ),
               )
       :Container(
         child:_isLoading

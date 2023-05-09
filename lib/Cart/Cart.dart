@@ -27,7 +27,7 @@ class _CartState extends State<Cart> {
   List<Infor_Oder> inforOderList=[];
   final user=FirebaseAuth.instance.currentUser!;
     bool _isLoading=true;
-    int txtTotalMoneyDish=0;
+    double txtTotalMoneyDish=0;
     int  viewQuantity=1;
     int id=0;
     int oK=0;
@@ -61,6 +61,9 @@ class _CartState extends State<Cart> {
                 child: Center(
                   child: Column(
                     children: const [
+                      SizedBox(
+                        height:150,
+                      ),
                       Icon(Icons.map_outlined,size: 200,color: Colors.grey,),
                       Text('Bạn chưa lựa món ăn để đặt hàng',style: TextStyle(
                         fontSize: 20,
@@ -429,7 +432,7 @@ class _CartState extends State<Cart> {
     onTap: ()
     {
       setState(() {
-        txtTotalMoneyDish=e.quantity*e.dish.priceDish;
+        txtTotalMoneyDish=(e.dish.priceDish-e.dish.priceDish*e.dish.sale)*e.quantity;
         moduleCart=e;
       });
     },
@@ -453,7 +456,7 @@ class _CartState extends State<Cart> {
                         color: Colors.black
                     ),
                     ),
-                    Text('${NumberFormat.decimalPattern().format(e.dish.priceDish).replaceAll(',','.')} VND',style: const TextStyle(
+                    Text('${NumberFormat.decimalPattern().format(e.dish.priceDish-e.dish.priceDish*e.dish.sale).replaceAll(',','.')} VND',style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: Colors.orange

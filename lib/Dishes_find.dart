@@ -126,7 +126,7 @@ class _Dishes_findState extends State<Dishes_find>  with TickerProviderStateMixi
       }
       for(var element in list)
         {
-          if(element.nameDish.toUpperCase().contains(widget.textSearched.toUpperCase()))
+          if(element.nameDish.trim().toUpperCase().contains(widget.textSearched.toUpperCase()))
             {
               listDishes.add(element);
             }

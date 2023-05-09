@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:oder_food/Cart/Cart.dart';
 import 'package:oder_food/TextSearched/Find_Food.dart';
 import 'package:oder_food/contact.dart';
-import 'package:oder_food/feedBack.dart';
+import 'package:oder_food/informationAccount.dart';
 import 'package:oder_food/transaction_History.dart';
 import 'SignIn_SignOut_Login/Login.dart';
 import 'home/home.dart';
@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
     const Cart(),
     const transaction_History(),
     const contact(),
-    const feedBack(),
+    const informatinAccount(),
 
   ];
   @override
@@ -71,6 +71,34 @@ class _HomeState extends State<Home> {
           elevation: 0,
         title:getAppBarTitle(),
         centerTitle: true,
+        actions: [
+          isChangeBackground ?
+          Stack(
+            children: [
+              IconButton(onPressed: (){
+              }, icon: const Icon(Icons.notifications,color:Colors.orange,size: 25,)),// Icon chính
+              Positioned(
+                top: 0,
+                right:0,
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Text('3' , // Số thông báo
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ):
+          const Icon(Icons.notifications,color: Colors.orange,)
+        ],
       ),
       body: _page[indexPage],
       floatingActionButton:isChangeBackground? AnimatedFloatingActionButton(animatedIconData: AnimatedIcons.view_list,
@@ -194,7 +222,7 @@ class _HomeState extends State<Home> {
       case 3:
         return setTittleText("Liên hệ ");
       case 4:
-        return setTittleText("Thông tin tài khoản");
+        return setTittleText("");
       default:
         return tiltelSearchAppBar();
     }

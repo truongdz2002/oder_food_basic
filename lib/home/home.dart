@@ -127,11 +127,10 @@ class _homeState extends State<home> {
   );
 
   void animateToSlide(int index) => controller.animateToPage(index);
-  Widget buildImages(String urlimage,int index)=>FadeInImage(
-    placeholder: const AssetImage('assets/TRA-SUA-HOKKAIDOU.jpg'),
-    image: NetworkImage(urlimage),
-    fit: BoxFit.cover,
-  );
+  Widget buildImages(String urlimage,int index)=>urlimage.isEmpty ?  const SkeletonAvatar(style: SkeletonAvatarStyle(width:double.infinity,height: 200),) : Image.network(urlimage,fit: BoxFit.cover,errorBuilder:(BuildContext context, Object exception, StackTrace? stackTrace)
+  {
+    return const SkeletonAvatar(style: SkeletonAvatarStyle(width:double.infinity,height: 200),);
+  },);
   Widget items(Dish item)=>GestureDetector(
     onTap: ()
     {
@@ -147,7 +146,10 @@ class _homeState extends State<home> {
             SizedBox(
               height:100,
               width: 250,
-              child: Image.network(item.urlImageDish,fit:BoxFit.fill,),
+              child:item.urlImageDish.isEmpty ?const SkeletonAvatar(style: SkeletonAvatarStyle(width:double.infinity,height: 200),) :Image.network(item.urlImageDish,fit:BoxFit.fill,errorBuilder:(BuildContext context, Object exception, StackTrace? stackTrace)
+              {
+                return const SkeletonAvatar(style: SkeletonAvatarStyle(width:double.infinity,height: 200),);
+              },),
             ),
             Text(item.nameDish,style: const TextStyle(
                 fontSize: 16,
@@ -162,7 +164,7 @@ class _homeState extends State<home> {
                 decorationThickness: 2.85
             ),)
             ,
-            Text('${NumberFormat.decimalPattern().format(item.priceDish).replaceAll(',','.')}  VND',style: const TextStyle(
+            Text('${NumberFormat.decimalPattern().format(item.priceDish-item.priceDish*item.sale).replaceAll(',','.')}  VND',style: const TextStyle(
                 fontSize: 14,
                 color: Colors.orange
             ),)

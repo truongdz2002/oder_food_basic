@@ -114,6 +114,7 @@ class _DishDetailState extends State<DishDetail> {
     Widget build(BuildContext context) {
       edtViewQuantity.text=viewQuantity.toString();
       final Dish dataDish=ModalRoute.of(context)!.settings.arguments as Dish;
+      final priceReal=dataDish.priceDish-dataDish.priceDish*dataDish.sale;
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.orange,
@@ -267,11 +268,17 @@ class _DishDetailState extends State<DishDetail> {
                   children: [
                     Row(
                       children: [
-                        Text(dataDish.nameDish,style: const TextStyle(
+                        Text('${dataDish.nameDish} ',style: const TextStyle(
                             fontSize: 20,
                             color: Colors.black,
                             fontWeight: FontWeight.bold
                         ),
+                        ),
+                      Text(' Giảm giá ${(dataDish.sale*100).toInt().toString()}%',style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.normal
+                  ),
                         ),
                       ],
                     ),
@@ -295,7 +302,7 @@ class _DishDetailState extends State<DishDetail> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: Text("${NumberFormat.decimalPattern().format(dataDish.priceDish).replaceAll(',','.')} VND",style: const TextStyle(
+                          child: Text("${NumberFormat.decimalPattern().format(priceReal).replaceAll(',','.')} VND",style: const TextStyle(
                             fontSize: 16,
                             color: Colors.orange,
 
@@ -386,7 +393,7 @@ class _DishDetailState extends State<DishDetail> {
                     {
                       return cartUser();
                     });
-                  }, icon: const Icon(Icons.shopping_basket,color:Colors.orange)),// Icon chính
+                  }, icon: const Icon(Icons.shopping_basket,color:Colors.orange,size: 35,)),// Icon chính
                   moduleCartList.isEmpty ?
                   Positioned(
                     top: 0,
@@ -427,16 +434,17 @@ class _DishDetailState extends State<DishDetail> {
                 ],
               )
               ,
-               SizedBox(width: 250,child: Text('${dataDish.priceDish} VND',textAlign: TextAlign.end,style: TextStyle(
+               SizedBox(width: 250,child: Text('${NumberFormat.decimalPattern().format(priceReal).replaceAll(',','.')} VND',textAlign: TextAlign.end,style: const TextStyle(
                 color: Colors.orange,
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.normal,
+                 fontSize: 18
               ),)),
               Padding(
                 padding: const EdgeInsets.only(left:10.0),
                 child: TextButton(onPressed:(){},
                   style: const ButtonStyle(
                     backgroundColor:MaterialStatePropertyAll(Colors.orange)
-                  ), child:const Text('Giao hàng',style:TextStyle(
+                  ), child:const Text('Đặt hàng',style:TextStyle(
                   color: Colors.white
                 ) ,),
                 ),
@@ -479,7 +487,7 @@ class _DishDetailState extends State<DishDetail> {
                   decorationThickness: 2.85
               ),)
               ,
-              Text('${NumberFormat.decimalPattern().format(item.priceDish).replaceAll(',','.')}  VND',style: const TextStyle(
+              Text('${NumberFormat.decimalPattern().format(item.priceDish-item.priceDish*item.sale).replaceAll(',','.')}  VND',style: const TextStyle(
                   fontSize: 14,
                   color: Colors.orange
               ),)
@@ -491,7 +499,6 @@ class _DishDetailState extends State<DishDetail> {
   );
   Widget cartUser() => Column(
     children: [
-
       const Padding(
         padding: EdgeInsets.all(10.0),
         child: Text('Giỏ hàng',textAlign: TextAlign.center,style: TextStyle(
@@ -552,7 +559,7 @@ class _DishDetailState extends State<DishDetail> {
                         color: Colors.black
                     ),
                     ),
-                    Text('${NumberFormat.decimalPattern().format(e.dish.priceDish).replaceAll(',','.')} VND',style: const TextStyle(
+                    Text('${NumberFormat.decimalPattern().format(e.dish.priceDish-e.dish.priceDish*e.dish.sale).replaceAll(',','.')} VND',style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: Colors.orange
