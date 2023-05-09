@@ -36,6 +36,7 @@ class _transaction_HistoryState extends State<transaction_History> {
   }
   void GetBillOderCreated()
   {
+    List<ModuleBillOderFood> billOderFoodListall=[];
     List<ModuleBillOderFood> billOderFoodListNew=[];
     ref.child('BillOderCreated').onValue.listen((event) {
       if(event.snapshot.value==null)
@@ -48,21 +49,37 @@ class _transaction_HistoryState extends State<transaction_History> {
       for(var element in list)
         {
           Map<String,dynamic> map=Map.from(element as dynamic) ;
-          billOderFoodListNew.add(ModuleBillOderFood.fromSnapshot(map));
+          billOderFoodListall.add(ModuleBillOderFood.fromSnapshot(map));
         }
-      for(var element in billOderFoodListNew)
+      for(var element in billOderFoodListall)
       {
         if(element.moduleCart.uidUser==user.uid)
         {
-          billOderFoodList.add(element);
+          billOderFoodListNew.add(element);
         }
       }
+      setState(() {
+        billOderFoodList=billOderFoodListNew;
+      });
     });
   }
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      body: Container(
+      body: billOderFoodList.isEmpty ?
+              SizedBox(
+                  child: Column(
+                    children: const [
+                      Icon(Icons.feed,size: 200,color: Colors.grey,),
+                      Text('Bạn chưa có hóa đơn nào',style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey
+                      ),)
+                    ],
+                  ),
+              )
+      :Container(
         child:_isLoading
             ?Skeleton(isLoading:true,skeleton:SkeletonListView(), child: Container())
             :ListView(

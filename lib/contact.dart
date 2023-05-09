@@ -20,7 +20,7 @@ class _contactState extends State<contact> {
  DatabaseReference ref =FirebaseDatabase.instance.ref();
  int  id=0;
  List<Dish> list=[
-   Dish(Id:'1', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/%C4%91%C3%B9i%20g%C3%A0%20chi%C3%AAn%20n%C6%B0%E1%BB%9Bng%20m%E1%BA%AFm.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Đùi gà chiênmắm', type:'food',sale:0.05),
+   Dish(Id:'1', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/%C4%91%C3%B9i%20g%C3%A0%20chi%C3%AAn%20n%C6%B0%E1%BB%9Bng%20m%E1%BA%AFm.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Đùi gà chiên mắm', type:'food',sale:0.05),
    Dish(Id:'2', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/b%C3%A1nh%20x%C3%A8o.jpg', priceDish:20000, amountBuyDish: 0, nameDish:'Bánh xèo', type:'food',sale:0.05),
    Dish(Id:'3', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/banh-cuon.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Bánh cuốn', type:'food',sale:0.05),
    Dish(Id:'4', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/b%C3%A0nhlan.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Bánh flan', type:'food',sale:0.05),
@@ -34,7 +34,7 @@ class _contactState extends State<contact> {
    Dish(Id:'12', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/suon-xao-chua-ngot.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Sườn chua ngọt', type:'food',sale:0.05),
    Dish(Id:'13', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/top-15-hinh-anh-mon-an-ngon-viet-nam-khien-ban-khong-the-roi-mat-7.jpg', priceDish:35000, amountBuyDish: 0, nameDish:'Bún rêu cua', type:'food',sale:0.05),
    Dish(Id:'14', urlImageDish:'https://d1sag4ddilekf6.azureedge.net/cuisine/40/icons/upload-photo-icon_f71f7805786348b694d2a9a886b85cee_1549034196325788582.jpeg', priceDish:50000, amountBuyDish: 0, nameDish:'Cháo sườn', type:'food',sale:0.05),
-   Dish(Id:'15', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/PIZZA.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Pizza', type:'drink',sale:0.05),
+   Dish(Id:'15', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/PIZZA.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Pizza', type:'food',sale:0.05),
    Dish(Id:'16', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/tra-hoa-qua.jpg', priceDish:20000, amountBuyDish: 0, nameDish:'Trà hoa quả', type:'drink',sale:0.05),
    Dish(Id:'17', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/matcha-tra-xanh.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Matcha trà xanh', type:'drink',sale:0.05),
    Dish(Id:'18', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/tra-hoa-qua.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Trà đảo chanh sả', type:'drink',sale:0.05),

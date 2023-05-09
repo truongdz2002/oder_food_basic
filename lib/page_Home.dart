@@ -27,9 +27,10 @@ class _HomeState extends State<Home> {
   final List<Widget> _page=[
     const home(),
     const Cart(),
-    const feedBack(),
+    const transaction_History(),
     const contact(),
-    const transaction_History()
+    const feedBack(),
+
   ];
   @override
   void initState() {
@@ -83,13 +84,12 @@ class _HomeState extends State<Home> {
         onTap:selectIndexPage ,
         backgroundColor:Colors.blueAccent,
         animationDuration: const Duration(milliseconds:400),
-
         items: const [
            Icon(Icons.home,color: Colors.orange,),
-           Icon(Icons.shopping_cart,color: Colors.orange,),
+           Icon(Icons.shopping_basket,color: Colors.orange,),
            Icon(Icons.feed,color: Colors.orange,),
            Icon(Icons.account_box_sharp,color: Colors.orange,),
-           Icon(Icons.history,color: Colors.orange,),
+           Icon(Icons.contact_mail_outlined,color: Colors.orange,),
         ],
       ),
 
@@ -190,11 +190,11 @@ class _HomeState extends State<Home> {
       case 1:
         return setTittleText('Giỏ hàng');
       case 2:
-        return setTittleText("Phản hồi");
+        return setTittleText("Hoá đơn");
       case 3:
         return setTittleText("Liên hệ ");
       case 4:
-        return setTittleText("Lịch sử giao dịch");
+        return setTittleText("Thông tin tài khoản");
       default:
         return tiltelSearchAppBar();
     }

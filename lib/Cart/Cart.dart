@@ -55,7 +55,23 @@ class _CartState extends State<Cart> {
       Column(
         children: [
           //List Dishes In Cart Of User
-          SizedBox(
+          moduleCartList.isEmpty ?
+              SizedBox(
+                height: 605,
+                child: Center(
+                  child: Column(
+                    children: const [
+                      Icon(Icons.map_outlined,size: 200,color: Colors.grey,),
+                      Text('Bạn chưa lựa món ăn để đặt hàng',style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey
+                      ),)
+                    ],
+                  ),
+                ),
+              ) :
+            SizedBox(
             height: 605,
             child: _isLoading
                    ?Skeleton(isLoading:_isLoading, skeleton: SkeletonListView(), child: Container())
