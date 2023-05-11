@@ -51,6 +51,10 @@ dependencies:
   rxdart: ^0.27.7
   curved_navigation_bar: ^1.0.3
   animated_floating_buttons: ^0.0.2
+  geolocator: ^9.0.2
+  geocoding: ^2.1.0
+  google_fonts: ^4.0.4
+  http: ^0.13.0
 
 
 dev_dependencies:

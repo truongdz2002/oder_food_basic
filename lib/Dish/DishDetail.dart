@@ -116,8 +116,9 @@ class _DishDetailState extends State<DishDetail> {
       final Dish dataDish=ModalRoute.of(context)!.settings.arguments as Dish;
       final priceReal=dataDish.priceDish-dataDish.priceDish*dataDish.sale;
       return Scaffold(
+        extendBodyBehindAppBar:true,
         appBar: AppBar(
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.black12,
           centerTitle: true,
           elevation: 1,
           title: const Text("Chi tiết món ăn",style: TextStyle(

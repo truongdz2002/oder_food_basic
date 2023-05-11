@@ -66,9 +66,6 @@ class _CartState extends State<Cart> {
                       ),
                       Icon(Icons.map_outlined,size: 200,color: Colors.grey,),
                       Text('Bạn chưa lựa món ăn để đặt hàng',style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey
                       ),)
                     ],
                   ),

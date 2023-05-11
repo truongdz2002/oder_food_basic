@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:oder_food/RequestPermission/RequestPermissionDevice.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:skeletons/skeletons.dart';
 
 import 'Dish/Dish.dart';
@@ -19,6 +22,7 @@ class _contactState extends State<contact> {
  bool  _isLoading=true;
  DatabaseReference ref =FirebaseDatabase.instance.ref();
  int  id=0;
+ String text='';
  List<Dish> list=[
    Dish(Id:'1', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/%C4%91%C3%B9i%20g%C3%A0%20chi%C3%AAn%20n%C6%B0%E1%BB%9Bng%20m%E1%BA%AFm.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Đùi gà chiên mắm', type:'food',sale:0.05),
    Dish(Id:'2', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/b%C3%A1nh%20x%C3%A8o.jpg', priceDish:20000, amountBuyDish: 0, nameDish:'Bánh xèo', type:'food',sale:0.05),
@@ -50,14 +54,57 @@ class _contactState extends State<contact> {
    // Dish(Id:'1', urlImageDish:'', priceDish:30000, amountBuyDish: 0, nameDish:'', type:'drink',sale:0.05)
  ];
  late final RequestPermissionDevice requestPermissionDevice;
-  @override
+ Future<void> requestPermissionLocal()
+ async {
+   PermissionStatus status= await Permission.location.request();
+   if(status.isGranted)
+     {
+       getCurrentAddress();
+       showAddress();
+     }
+   else
+     {
+
+     }
+ }
+ void showAddress()
+ {
+   ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(content:Text('Thanh hoa'),leading:const Icon(Icons.location_on,color:Colors.orange,),
+       backgroundColor: Colors.white,
+       elevation:5,
+       actions:[
+         IconButton(onPressed:(){
+           ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+         }, icon: const Icon(Icons.disabled_by_default,color: Colors.grey,))
+       ]));
+ }
+ void getCurrentAddress() async {
+   Position position = await Geolocator.getCurrentPosition(
+     desiredAccuracy: LocationAccuracy.high,
+   );
+
+   List<Placemark> placemarks = await placemarkFromCoordinates(
+     position.latitude,
+     position.longitude,
+   );
+   Placemark placemark = placemarks[0];
+   String address = '${placemark.street}, ${placemark.subLocality}, ${placemark.locality}, ${placemark.country}';
+   setState(() {
+     text=address;
+   });
+
+
+ }
+
+ @override
   void initState() {
+    //requestPermissionLocal();
     requestPermissionDevice=RequestPermissionDevice();
     requestPermissionDevice.Intialize();
       Future.delayed(const Duration(seconds: 1),()
       {
         setState(() {
-      _isLoading=false;
+        _isLoading=false;
       });
     });
       super.initState();
@@ -87,7 +134,7 @@ class _contactState extends State<contact> {
                   UpdatedataDish();
                    //id=id+1;
                  // await  requestPermissionDevice.ShowNotification(id: id, title:'Món ăn oder', body: 'ok');
-                }, child:const Text('baaaaa')),
+                }, child: Text(text.isEmpty ? '' : text)),
           ),
         ),
       ),
