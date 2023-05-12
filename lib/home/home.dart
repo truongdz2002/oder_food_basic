@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -38,6 +39,7 @@ class _homeState extends State<home> with SingleTickerProviderStateMixin{
     _scrollController=ScrollController();
     getDataDishRealTimeDataBase();
     requestPermissionLocal();
+    //getDataDishApi();
     _scrollController.addListener(_handleScroll);
     if (dishList.isEmpty) {
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -429,6 +431,30 @@ class _homeState extends State<home> with SingleTickerProviderStateMixin{
            _tabController.animateTo(2);
          }
      }
+   }
+   Future<void> getDataDishApi()
+   async {
+     final response= await http.get(Uri.parse('https://appbansmaytinh.000webhostapp.com/oder_food/apiDish/getDish.php'));
+     List<dynamic> dataDish=[];
+     if(response.statusCode==200)
+     {
+       dataDish=jsonDecode(response.body);
+     }
+     else
+     {
+       throw Exception('Lỗi khi tải dữ liệu từ API');
+     }
+     for(var element in dataDish)
+     {
+       dishList.add(Dish.fromSnapshotApi(element));
+     }
+     dishList.sort((a, b) {
+       {
+         final priorityA = priorityList.indexOf(a.type);
+         final priorityB = priorityList.indexOf(b.type);
+         return priorityA.compareTo(priorityB);
+       }
+     });
    }
 }
 

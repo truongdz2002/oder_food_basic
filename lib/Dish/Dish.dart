@@ -36,6 +36,20 @@ class Dish
         sale: value['sale']
     );
   }
+  factory Dish.fromSnapshotApi(Map<String , dynamic> value) {
+    String priceDishNew=value['priceDish'].toString();
+    String amountBuyDishNew=value['amountBuyDish'].toString();
+    String saleNew=value['sale'].toString();
+    return Dish(
+        Id: value['Id'],
+        urlImageDish: value['urlImageDish'],
+        priceDish: int.tryParse(priceDishNew)!,
+        amountBuyDish: int.tryParse(amountBuyDishNew)!,
+        nameDish: value['nameDish'],
+        type: value['type'],
+        sale: double.tryParse(saleNew)!
+    );
+  }
 
 
 }
