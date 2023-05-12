@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -21,19 +20,25 @@ class home extends StatefulWidget {
   State<home> createState() => _homeState();
 }
 
-class _homeState extends State<home> {
+class _homeState extends State<home> with SingleTickerProviderStateMixin{
    int activeIndex = 0;
    bool _isLoading=true;
   List<Dish> dishList=[];
+  late ScrollController _scrollController;
   String textAddress='';
   bool _visibity=false;
+  late TabController _tabController;
   final controller = CarouselController();
   final DatabaseReference ref=FirebaseDatabase.instance.ref();
+   List<String> priorityList = ['food', 'drink', 'dessert'];
   @override
   void initState() {
     super.initState();
+    _tabController=TabController(length: 3, vsync:this);
+    _scrollController=ScrollController();
     getDataDishRealTimeDataBase();
     requestPermissionLocal();
+    _scrollController.addListener(_handleScroll);
     if (dishList.isEmpty) {
       Future.delayed(const Duration(milliseconds: 500), () {
         setState(() {
@@ -43,26 +48,13 @@ class _homeState extends State<home> {
     }
 
   }
+   @override
+   void dispose() {
+     _scrollController.removeListener(_handleScroll);
+     _scrollController.dispose();
+     _tabController.dispose();
+   }
 
-    Future<void> getDataDishRealTimeDataBase() async {
-      List<Dish> dishes = [];
-      ref
-          .child('dishes')
-          .onValue
-          .listen((event) {
-        List<Object?> a = event.snapshot.value as List<Object?>;
-        List<Object> nonNullableList = a
-            .where((element) => element != null)
-            .toList()
-            .cast<Object>();
-        for (var element in nonNullableList) {
-          Map<String, dynamic> map = Map.from(element as dynamic);
-          dishes.add(Dish.fromSnapshot(map));
-          dishList = dishes;
-          dishList.sort((a, b) => b.amountBuyDish.compareTo(a.amountBuyDish));
-        }
-      });
-    }
     @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -157,9 +149,32 @@ class _homeState extends State<home> {
                         )
                       ],
                     ),
+                    TabBar(onTap:(_)=> scrollToSelectedType(),controller:_tabController,isScrollable: true,tabs: const [
+                      Tab(child: Text('Món ăn',style: TextStyle(
+                        color: Colors.orange,
+                        fontSize:16,
+                        fontWeight: FontWeight.bold
+                      ),),),
+                      Tab(child: Text('Đồ uống ',style: TextStyle(
+                          color: Colors.orange,
+                          fontSize:16,
+                          fontWeight: FontWeight.bold
+                      )),),
+                      Tab(child: Text('Tráng miệng',
+                          style: TextStyle(
+                              color: Colors.orange,
+                              fontSize:16,
+                              fontWeight: FontWeight.bold
+                          )),)
+                    ],),
+                    const SizedBox(
+                      height:10,
+                    ),
+
                     SizedBox(
                         width: double.infinity, height: 500,
                         child: GridView(
+                          controller: _scrollController,
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2
                           ),
@@ -173,8 +188,6 @@ class _homeState extends State<home> {
                 ),
               )
           )
-
-
       );
     }
     Widget buildIndicator() =>
@@ -206,46 +219,49 @@ class _homeState extends State<home> {
                     arguments: item
                 )));
           },
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 100,
-                    width: 250,
-                    child: item.urlImageDish.isEmpty ? const SkeletonAvatar(
-                      style: SkeletonAvatarStyle(
-                          width: double.infinity, height: 200),) : Image
-                        .network(item.urlImageDish, fit: BoxFit.fill,
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? stackTrace) {
-                        return const SkeletonAvatar(style: SkeletonAvatarStyle(
-                            width: double.infinity, height: 200),);
-                      },),
-                  ),
-                  Text(item.nameDish, style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black
-                  ),
-                  ),
-                  Text('${NumberFormat.decimalPattern()
-                      .format(item.priceDish)
-                      .replaceAll(',', '.')}  VND', style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                      decoration: TextDecoration.lineThrough,
-                      decorationThickness: 2.85
-                  ),)
-                  ,
-                  Text('${NumberFormat.decimalPattern().format(
-                      item.priceDish - item.priceDish * item.sale).replaceAll(
-                      ',', '.')}  VND', style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.orange
-                  ),)
-                ],
+          child: SizedBox(
+            height: 100,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 100,
+                      width: 250,
+                      child: item.urlImageDish.isEmpty ? const SkeletonAvatar(
+                        style: SkeletonAvatarStyle(
+                            width: double.infinity, height: 200),) : Image
+                          .network(item.urlImageDish, fit: BoxFit.fill,
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? stackTrace) {
+                          return const SkeletonAvatar(style: SkeletonAvatarStyle(
+                              width: double.infinity, height: 200),);
+                        },),
+                    ),
+                    Text(item.nameDish, style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black
+                    ),
+                    ),
+                    Text('${NumberFormat.decimalPattern()
+                        .format(item.priceDish)
+                        .replaceAll(',', '.')}  VND', style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                        decoration: TextDecoration.lineThrough,
+                        decorationThickness: 2.85
+                    ),)
+                    ,
+                    Text('${NumberFormat.decimalPattern().format(
+                        item.priceDish - item.priceDish * item.sale).replaceAll(
+                        ',', '.')}  VND', style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.orange
+                    ),)
+                  ],
+                ),
               ),
             ),
           ),
@@ -276,6 +292,7 @@ class _homeState extends State<home> {
 
      // Xây dựng chuỗi địa chỉ bằng cách kết hợp các thuộc tính của địa điểm
      String address = '${placemark.street}, ${placemark.subLocality}, ${placemark.locality}, ${placemark.country}';
+
 
      // Cập nhật trạng thái của widget
      setState(() {
@@ -343,12 +360,75 @@ class _homeState extends State<home> {
        }
      }
    }
+   void scrollToSelectedType() {
+     final selectedType =
+     _tabController.index == 0
+         ? 'food'
+         : _tabController.index == 1
+         ? 'drink'
+         : 'dessert';
 
+     final selectedTypeIndex = dishList.indexWhere((dish) => dish.type == selectedType);
+     if (selectedTypeIndex != -1) {
+       const itemSize = 120.0; // Adjust the item size according to your item widget
+       final offset = selectedTypeIndex * itemSize;
 
+       _scrollController.animateTo(
+         offset,
+         duration: const Duration(milliseconds: 400),
+         curve: Curves.easeInOut,
+       );
+     }
+   }
 
+   Future<void> getDataDishRealTimeDataBase() async {
+     List<Dish> dishes = [];
+     ref
+         .child('dishes')
+         .onValue
+         .listen((event) {
+       List<Object?> a = event.snapshot.value as List<Object?>;
+       List<Object> nonNullableList = a
+           .where((element) => element != null)
+           .toList()
+           .cast<Object>();
+       for (var element in nonNullableList) {
+         Map<String, dynamic> map = Map.from(element as dynamic);
+         dishes.add(Dish.fromSnapshot(map));
+         dishList = dishes;
+         dishList.sort((a, b) {
+           {
+             final priorityA = priorityList.indexOf(a.type);
+             final priorityB = priorityList.indexOf(b.type);
+             return priorityA.compareTo(priorityB);
+           }
+         });
+       }
+     });
+   }
+   void _handleScroll() {
+     double scrollPosition = _scrollController.position.pixels;
 
+     int index = dishList.indexWhere((dish) {
+       double itemPosition = dishList.indexOf(dish) * 100.0; // Điều chỉnh kích thước của mỗi phần tử trong danh sách
+       return itemPosition <= scrollPosition && scrollPosition < itemPosition + 100.0;
+     });
 
-
-
+     if (index != -1) {
+       String itemType = dishList[index].type;
+       if(itemType=='food')
+         {
+           _tabController.animateTo(0);
+         }
+       else if(itemType=='drink')
+         {
+           _tabController.animateTo(1);
+         }
+       else
+         {
+           _tabController.animateTo(2);
+         }
+     }
+   }
 }
 

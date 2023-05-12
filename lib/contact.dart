@@ -27,7 +27,7 @@ class _contactState extends State<contact> {
    Dish(Id:'1', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/%C4%91%C3%B9i%20g%C3%A0%20chi%C3%AAn%20n%C6%B0%E1%BB%9Bng%20m%E1%BA%AFm.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Đùi gà chiên mắm', type:'food',sale:0.05),
    Dish(Id:'2', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/b%C3%A1nh%20x%C3%A8o.jpg', priceDish:20000, amountBuyDish: 0, nameDish:'Bánh xèo', type:'food',sale:0.05),
    Dish(Id:'3', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/banh-cuon.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Bánh cuốn', type:'food',sale:0.05),
-   Dish(Id:'4', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/b%C3%A0nhlan.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Bánh flan', type:'food',sale:0.05),
+   Dish(Id:'4', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/b%C3%A0nhlan.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Bánh flan', type:'dessert',sale:0.05),
    Dish(Id:'5', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/b%C3%BAn_cha.jpg', priceDish:25000, amountBuyDish: 0, nameDish:'Bún chả ', type:'food',sale:0.05),
    Dish(Id:'6', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/ca-ri-ga-cay.jpg', priceDish:50000, amountBuyDish: 0, nameDish:'Cari cay', type:'food',sale:0.05),
    Dish(Id:'7', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/caolau.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Cao lẩu', type:'food',sale:0.05),
@@ -41,17 +41,17 @@ class _contactState extends State<contact> {
    Dish(Id:'15', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/PIZZA.jpg', priceDish:100000, amountBuyDish: 0, nameDish:'Pizza', type:'food',sale:0.05),
    Dish(Id:'16', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/tra-hoa-qua.jpg', priceDish:20000, amountBuyDish: 0, nameDish:'Trà hoa quả', type:'drink',sale:0.05),
    Dish(Id:'17', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/matcha-tra-xanh.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Matcha trà xanh', type:'drink',sale:0.05),
-   Dish(Id:'18', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/tra-hoa-qua.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Trà đảo chanh sả', type:'drink',sale:0.05),
+   Dish(Id:'18', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/tra-dao-chanh-sa.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Trà đào chanh sả', type:'drink',sale:0.05),
    Dish(Id:'19', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/TRA-SUA-HOKKAIDOU.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Trà sửa hokaidou', type:'drink',sale:0.05),
    Dish(Id:'20', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/cacao-nong.jpg', priceDish:50000, amountBuyDish: 0, nameDish:'Ca cao', type:'drink',sale:0.05),
    Dish(Id:'21', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/socola-da-xay.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Socola đá xay', type:'drink',sale:0.05),
    Dish(Id:'22', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/soda-viet-quat.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Soda việt quất', type:'drink',sale:0.05),
-   // Dish(Id:'1', urlImageDish:'', priceDish:30000, amountBuyDish: 0, nameDish:'', type:'drink',sale:0.05),
-   // Dish(Id:'1', urlImageDish:'', priceDish:30000, amountBuyDish: 0, nameDish:'', type:'drink',sale:0.05),
-   // Dish(Id:'1', urlImageDish:'', priceDish:30000, amountBuyDish: 0, nameDish:'', type:'drink',sale:0.05),
-   // Dish(Id:'1', urlImageDish:'', priceDish:30000, amountBuyDish: 0, nameDish:'', type:'drink',sale:0.05),
-   // Dish(Id:'1', urlImageDish:'', priceDish:30000, amountBuyDish: 0, nameDish:'', type:'drink',sale:0.05),
-   // Dish(Id:'1', urlImageDish:'', priceDish:30000, amountBuyDish: 0, nameDish:'', type:'drink',sale:0.05)
+   Dish(Id:'23', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/Ch%C3%A8_%C4%91%E1%BA%ADu_%C4%91%E1%BB%8F.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Chè đậu đỏ', type:'dessert',sale:0.05),
+   Dish(Id:'24', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/B%C3%A1nh_chu%E1%BB%91i_n%C6%B0%E1%BB%9Bng.jpg', priceDish:20000, amountBuyDish: 0, nameDish:'Bánh chuối nướng', type:'dessert',sale:0.05),
+   Dish(Id:'25', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/B%C3%A1nh_da_l%E1%BB%A3n.jpg', priceDish:10000, amountBuyDish: 0, nameDish:'Bánh da lợn', type:'dessert',sale:0.05),
+   Dish(Id:'26', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/S%C6%B0%C6%A1ng%20%20s%C3%A1o%20n%C6%B0%E1%BB%9Bc%20c%E1%BB%91t%20d%E1%BB%ABa.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Sương sáo cốt dừa', type:'dessert',sale:0.05),
+   Dish(Id:'27', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/Ch%C3%A8%20d%E1%BB%ABa%20d%E1%BA%A7m.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Chè dừa dầm', type:'dessert',sale:0.05),
+   Dish(Id:'28', urlImageDish:'https://appbansmaytinh.000webhostapp.com/Image/B%C3%A1nh%20chu%E1%BB%91i%20h%E1%BA%A5p%20n%C6%B0%E1%BB%9Bc%20c%E1%BB%91t%20d%E1%BB%ABa.jpg', priceDish:30000, amountBuyDish: 0, nameDish:'Bánh chuối cốt dừa', type:'dessert',sale:0.05)
  ];
  late final RequestPermissionDevice requestPermissionDevice;
  Future<void> requestPermissionLocal()
