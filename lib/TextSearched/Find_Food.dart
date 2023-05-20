@@ -105,6 +105,7 @@ class _Find_FoodState extends State<Find_Food> {
    void GetTextSearched()
    {
      List<TextSearched> list=[];
+     List<TextSearched> listnew=[];
      ref.child('TextSearched').onValue.listen((event) {
        if(event.snapshot.value==null)
        {
@@ -122,9 +123,12 @@ class _Find_FoodState extends State<Find_Food> {
        {
          if(element.uid==user.uid)
          {
-           listTextSearched.add(element);
+           listnew.add(element);
          }
        }
+       setState(() {
+         listTextSearched=listnew;
+       });
      });
    }
    Widget Item(TextSearched e) => GestureDetector(

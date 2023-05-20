@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:oder_food/Dish/Dish.dart';
+import 'package:oder_food/UseDataWithFirebase/FirebaseDataDish.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:intl/intl.dart';
 
@@ -19,13 +20,14 @@ class Dishes_find extends StatefulWidget {
 class _Dishes_findState extends State<Dishes_find>  with TickerProviderStateMixin{
   late TabController _tabController;
   List<Dish> listDishes=[];
+  late final FirebaseDataDish firebaseDataDish=FirebaseDataDish();
   final DatabaseReference ref=FirebaseDatabase.instance.ref();
   bool _isLoading=true;
   @override
   void initState() {
     _tabController=TabController(length: 2,vsync: this);
-    GetDataDishFind();
-    Future.delayed(Duration(seconds:1),(){
+    getDataDishFind();
+    Future.delayed( const Duration(seconds:1),(){
       setState(() {
         _isLoading=false;
       });
@@ -109,28 +111,28 @@ class _Dishes_findState extends State<Dishes_find>  with TickerProviderStateMixi
       ),
     ),
   );
-  void GetDataDishFind()
-  {
+  Future<void> getDataDishFind()
+  async {
     List<Dish> list=[];
     ref.child('dishes').onValue.listen((event) {
       log(event.snapshot.value.toString());
       if(event.snapshot.value==null)
-        {
-          return;
-        }
+      {
+        return;
+      }
       List<Object?> a=event.snapshot.value as List<Object?>;
       List<Object> nonNullableList = a.where((element) => element != null).toList().cast<Object>() ;
       for (var element in nonNullableList) {
         Map<String, dynamic> map = Map.from(element as dynamic);
-       list.add(Dish.fromSnapshot(map));
+        list.add(Dish.fromSnapshot(map));
       }
       for(var element in list)
+      {
+        if(element.nameDish.toUpperCase().contains(widget.textSearched.toUpperCase()))
         {
-          if(element.nameDish.trim().toUpperCase().contains(widget.textSearched.toUpperCase()))
-            {
-              listDishes.add(element);
-            }
+          listDishes.add(element);
         }
+      }
     });
 
   }

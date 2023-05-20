@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
+import 'package:oder_food/ManagerCache/ManagerCache.dart';
+import 'package:oder_food/UseDataFromApi/ApiDataDish.dart';
+import 'Dish/Dish.dart';
 import 'SlashScreen/SlashScreen.dart';
 import 'firebase_options.dart';
 
@@ -10,8 +14,21 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   //SystemChrome.setEnabledSystemUIOverlays([]);
-  runApp(const MaterialApp(
+  runApp(
+      const MaterialApp(
     home: SlashScreen(),
     debugShowCheckedModeBanner: false,
-  ));
+  ),
+  );
+  //cretateMemoryCache();
+
+}
+Future<void> cretateMemoryCache()
+async {
+  final ApiDataDish apiDataDish=ApiDataDish();
+  final ManagerCache  managerCache=ManagerCache();
+  List<Dish> listDish= await apiDataDish.getDataDishApi();
+  List<Dish> listDishNew=[];
+  managerCache.saveDishListToCache(listDish);
+
 }

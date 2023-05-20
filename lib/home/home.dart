@@ -1,15 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:oder_food/Dish/DishDetail.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:oder_food/ManagerCache/ManagerCache.dart';
+import 'package:oder_food/RequestPermission/RequestpermissionAddress.dart';
+import 'package:oder_food/UseBloc/BlocWithDish.dart';
+import 'package:oder_food/UseDataFromApi/ApiDataDish.dart';
+import 'package:oder_food/UseDataWithFirebase/FirebaseDataDish.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../Dish/Dish.dart';
@@ -24,22 +24,24 @@ class home extends StatefulWidget {
 class _homeState extends State<home> with SingleTickerProviderStateMixin{
    int activeIndex = 0;
    bool _isLoading=true;
-  List<Dish> dishList=[];
+   List<Dish> dishList=[];
+  late final FirebaseDataDish firebaseDataDish=FirebaseDataDish();
+  late final ManagerCache managerCache=ManagerCache();
+  late final ApiDataDish apiDataDish=ApiDataDish();
+  late final RequestpermissionAdrress requestpermissionAdrress=RequestpermissionAdrress();
   late ScrollController _scrollController;
   String textAddress='';
   bool _visibity=false;
   late TabController _tabController;
   final controller = CarouselController();
   final DatabaseReference ref=FirebaseDatabase.instance.ref();
-   List<String> priorityList = ['food', 'drink', 'dessert'];
   @override
   void initState() {
     super.initState();
     _tabController=TabController(length: 3, vsync:this);
     _scrollController=ScrollController();
-    getDataDishRealTimeDataBase();
-    requestPermissionLocal();
-    //getDataDishApi();
+    getListDataDish();
+    addressLocal();
     _scrollController.addListener(_handleScroll);
     if (dishList.isEmpty) {
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -56,11 +58,36 @@ class _homeState extends State<home> with SingleTickerProviderStateMixin{
      _scrollController.dispose();
      _tabController.dispose();
    }
-
     @override
     Widget build(BuildContext context) {
+    //final BlocWithDish blocWithDish=BlocWithDish(firebaseDataDish);
       return Scaffold(
-          body: Container(
+          body:
+          // BlocBuilder<BlocWithDish, List<dynamic>>(
+          //   builder: (BuildContext context, List<dynamic> listDish) {
+          //     if (listDish.isEmpty) {
+          //       return Center(child: CircularProgressIndicator());
+          //     } else {
+          //       return ListView.builder(
+          //         itemCount: listDish.length,
+          //         itemBuilder: (BuildContext context, int index) {
+          //           final dish = listDish[index];
+          //           return ListTile(
+          //             title: Text(dish['Id']),
+          //             subtitle: Text(dish['nameDish']),
+          //           );
+          //         },
+          //       );
+          //     }
+          //   },
+          // ),
+          // floatingActionButton: FloatingActionButton(
+          // child: Icon(Icons.refresh),
+          //   onPressed: () {
+          //   blocWithDish.add(null);
+          //    },)
+
+          Container(
               child: _isLoading
                   ? Skeleton(
                 isLoading: true,
@@ -268,100 +295,7 @@ class _homeState extends State<home> with SingleTickerProviderStateMixin{
             ),
           ),
         );
-    Future<void> requestPermissionLocal() async {
-      PermissionStatus status = await Permission.location.request();
-      if (status.isGranted) {
-        getCurrentAddress();
-      }
-      else {
 
-      }
-    }
-   void getCurrentAddress() async {
-     // Lấy vị trí hiện tại của thiết bị
-     Position position = await Geolocator.getCurrentPosition(
-       desiredAccuracy: LocationAccuracy.high,
-     );
-
-     // Lấy danh sách các địa điểm dựa trên vị trí đã lấy được
-     List<Placemark> placemarks = await placemarkFromCoordinates(
-       position.latitude,
-       position.longitude,
-     );
-
-     // Lấy thông tin chi tiết địa điểm đầu tiên từ danh sách
-     Placemark placemark = placemarks[0];
-
-     // Xây dựng chuỗi địa chỉ bằng cách kết hợp các thuộc tính của địa điểm
-     String address = '${placemark.street}, ${placemark.subLocality}, ${placemark.locality}, ${placemark.country}';
-
-
-     // Cập nhật trạng thái của widget
-     setState(() {
-       // Gán giá trị địa chỉ cho biến textAddress
-       textAddress = address;
-
-       // Đặt cờ hiển thị (_visibity) thành true
-       _visibity = true;
-     });
-   }
-
-   void getAddressFromLatLng(double latitude, double longitude) async {
-     const apiKey = 'YOUR_API_KEY'; // Thay YOUR_API_KEY bằng khóa API của bạn
-
-     final url = Uri.parse(
-         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey');
-
-     final response = await http.get(url);
-     final decodedData = json.decode(response.body);
-
-     if (decodedData['status'] == 'OK') {
-       final results = decodedData['results'];
-       if (results.isNotEmpty) {
-         final firstResult = results[0];
-         final formattedAddress = firstResult['formatted_address'];
-
-         final addressComponents = firstResult['address_components'];
-         String streetNumber = '';
-         String route = '';
-         String subLocality = '';
-         String locality = '';
-         String administrativeAreaLevel2 = '';
-         String administrativeAreaLevel1 = '';
-         String country = '';
-
-         for (var component in addressComponents) {
-           final types = component['types'];
-           final longName = component['long_name'];
-
-           if (types.contains('street_number')) {
-             streetNumber = longName; // Lấy số nhà
-           } else if (types.contains('route')) {
-             route = longName; // Lấy tên đường
-           } else if (types.contains('sublocality')) {
-             subLocality = longName; // Lấy phường/xã
-           } else if (types.contains('locality')) {
-             locality = longName; // Lấy quận/huyện
-           } else if (types.contains('administrative_area_level_2')) {
-             administrativeAreaLevel2 = longName; // Lấy tỉnh/thành phố
-           } else if (types.contains('administrative_area_level_1')) {
-             administrativeAreaLevel1 = longName; // Lấy tỉnh/bang
-           } else if (types.contains('country')) {
-             country = longName; // Lấy quốc gia
-           }
-         }
-         String address = '${streetNumber}, ${route}, ${subLocality }, ${locality},${ administrativeAreaLevel2},${country}}';
-         // Cập nhật trạng thái của widget
-         setState(() {
-           // Gán giá trị địa chỉ cho biến textAddress
-           textAddress = address;
-
-           // Đặt cờ hiển thị (_visibity) thành true
-           _visibity = true;
-         });
-       }
-     }
-   }
    void scrollToSelectedType() {
      final selectedType =
      _tabController.index == 0
@@ -381,32 +315,6 @@ class _homeState extends State<home> with SingleTickerProviderStateMixin{
          curve: Curves.easeInOut,
        );
      }
-   }
-
-   Future<void> getDataDishRealTimeDataBase() async {
-     List<Dish> dishes = [];
-     ref
-         .child('dishes')
-         .onValue
-         .listen((event) {
-       List<Object?> a = event.snapshot.value as List<Object?>;
-       List<Object> nonNullableList = a
-           .where((element) => element != null)
-           .toList()
-           .cast<Object>();
-       for (var element in nonNullableList) {
-         Map<String, dynamic> map = Map.from(element as dynamic);
-         dishes.add(Dish.fromSnapshot(map));
-         dishList = dishes;
-         dishList.sort((a, b) {
-           {
-             final priorityA = priorityList.indexOf(a.type);
-             final priorityB = priorityList.indexOf(b.type);
-             return priorityA.compareTo(priorityB);
-           }
-         });
-       }
-     });
    }
    void _handleScroll() {
      double scrollPosition = _scrollController.position.pixels;
@@ -432,29 +340,24 @@ class _homeState extends State<home> with SingleTickerProviderStateMixin{
          }
      }
    }
-   Future<void> getDataDishApi()
+
+   Future<void> getListDataDish()
    async {
-     final response= await http.get(Uri.parse('https://appbansmaytinh.000webhostapp.com/oder_food/apiDish/getDish.php'));
-     List<dynamic> dataDish=[];
-     if(response.statusCode==200)
-     {
-       dataDish=jsonDecode(response.body);
-     }
-     else
-     {
-       throw Exception('Lỗi khi tải dữ liệu từ API');
-     }
-     for(var element in dataDish)
-     {
-       dishList.add(Dish.fromSnapshotApi(element));
-     }
-     dishList.sort((a, b) {
-       {
-         final priorityA = priorityList.indexOf(a.type);
-         final priorityB = priorityList.indexOf(b.type);
-         return priorityA.compareTo(priorityB);
-       }
+     //dishList= await firebaseDataDish.getDishes();
+     dishList= await apiDataDish.getDataDishApi();
+     //dishList=await managerCache.getDishListFromCache();
+   }
+   Future<void> addressLocal() async {
+     String address=await  requestpermissionAdrress.requestPermissionLocal();
+     setState(()  {
+       // Gán giá trị địa chỉ cho biến textAddress
+       textAddress =address;
+
+       // Đặt cờ hiển thị (_visibity) thành true
+       _visibity = true;
      });
    }
 }
+
+
 

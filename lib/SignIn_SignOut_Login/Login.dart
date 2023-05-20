@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
 
     void LoginWithGoogle()
     async {
-      processLoginGoogle.LoginWithGoogle();
+      processLoginGoogle.loginWithGoogle();
 
     }
     void Next()
