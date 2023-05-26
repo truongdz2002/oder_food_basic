@@ -1,7 +1,8 @@
 
 import 'dart:convert';
 
-import 'package:oder_food/Dish/Dish.dart';
+import 'package:oder_food/api/AddressUrl/AddressUrl.dart';
+import 'package:oder_food/page/home/entity/Dish.dart';
 import 'package:http/http.dart' as http;
 
 class ApiDataDish{
@@ -9,7 +10,7 @@ class ApiDataDish{
   async {
     List<Dish> dishList=[];
     List<String> priorityList = ['food', 'drink', 'dessert'];
-    final response= await http.get(Uri.parse('https://appbansmaytinh.000webhostapp.com/oder_food/apiDish/getDish.php'));
+    final response= await http.get(Uri.parse(AddressUrL.baseUrl+AddressUrL.listDish));
     List<dynamic> dataDish=[];
     if(response.statusCode==200)
     {

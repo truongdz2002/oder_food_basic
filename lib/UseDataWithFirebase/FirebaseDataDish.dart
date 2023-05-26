@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 
-import '../Dish/Dish.dart';
+import '../page/home/entity/Dish.dart';
 
 class FirebaseDataDish
 {

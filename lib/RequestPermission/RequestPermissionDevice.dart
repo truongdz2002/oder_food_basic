@@ -4,9 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class RequestPermissionDevice {
   RequestPermissionDevice();
-
   final FlutterLocalNotificationsPlugin _notificationLocal = FlutterLocalNotificationsPlugin();
-
   Future<void> Intialize() async {
     const AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings(
         '@mipmap/ic_launcher');

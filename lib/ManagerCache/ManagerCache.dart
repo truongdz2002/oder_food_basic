@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
-import '../Dish/Dish.dart';
+import '../page/home/entity/Dish.dart';
 class ManagerCache {
   Future<void> saveDishListToCache(List<Dish> dishList) async {
     final cacheManager = DefaultCacheManager();

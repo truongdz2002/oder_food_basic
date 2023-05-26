@@ -12,20 +12,49 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:http/http.dart' as http;
 
-import 'Dish/Dish.dart';
+import 'page/home/entity/Dish.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+
+// Sự kiện đăng nhập
+class LoginEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+// Sự kiện thực hiện đăng nhập
+class PerformLoginEvent extends LoginEvent {
+  final String username;
+  final String password;
+
+  PerformLoginEvent({required this.username, required this.password});
+
+  @override
+  List<Object?> get props => [username, password];
+}
+
+// Lớp Bloc đăng nhập
+class LoginBloc extends Bloc<LoginEvent, bool> {
+  LoginBloc() : super(false);
+
+  @override
+  Stream<bool> mapEventToState(LoginEvent event) async* {
+    if (event is PerformLoginEvent) {
+      // Thực hiện xử lý đăng nhập ở đây
+      // Ví dụ: Kiểm tra username và password, gửi yêu cầu đăng nhập đến API, ...
+      await Future.delayed(Duration(seconds: 2)); // Giả lập xử lý trong 2 giây
+      yield true; // Đăng nhập thành công
+    }
+  }
+}
+
 class test{
    final String Id;
    final String title;
    test({required this.Id,required this.title});
 }
-class contact extends StatefulWidget {
-  const contact({Key? key}) : super(key: key);
+class contact extends StatelessWidget {
 
-  @override
-  State<contact> createState() => _contactState();
-}
-
-class _contactState extends State<contact> {
   bool _isLoading = true;
   DatabaseReference ref = FirebaseDatabase.instance.ref();
   int id = 0;
@@ -232,7 +261,6 @@ class _contactState extends State<contact> {
         sale: 0.05)
   ];
   late final RequestPermissionDevice requestPermissionDevice;
-
   @override
   void initState() {
     //requestPermissionLocal();
@@ -240,12 +268,6 @@ class _contactState extends State<contact> {
     requestPermissionDevice = RequestPermissionDevice();
     requestPermissionDevice.Intialize();
     getDataDishApi();
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
-    super.initState();
   }
 
   Future<void> fetchData() async {
@@ -271,30 +293,20 @@ class _contactState extends State<contact> {
       ref.child('dishes').child(element.Id).set(element.toJson());
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child:
-        _isLoading
-            ? Skeleton(
-          isLoading: true,
-          skeleton: SkeletonListView(),
-          child: Container(),
-        )
-            : Container(
-          child: Center(
-            child: ElevatedButton(onPressed: () async {
-              //postData();
-              //UpdatedataDish();
-              //id=id+1;
-              //  setState(() {
-              //    a=listtest[0].Id;
-              //  });
-              // await  requestPermissionDevice.ShowNotification(id: id, title:'Món ăn oder', body: 'ok');
-            }, child: Text(a)),
-          ),
+        child: Center(
+          child: ElevatedButton(onPressed: () async {
+            //postData();
+            //UpdatedataDish();
+            //id=id+1;
+            //  setState(() {
+            //    a=listtest[0].Id;
+            //  });
+            // await  requestPermissionDevice.ShowNotification(id: id, title:'Món ăn oder', body: 'ok');
+          }, child: Text(a)),
         ),
       ),
 
