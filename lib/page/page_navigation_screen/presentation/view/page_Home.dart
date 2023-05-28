@@ -135,17 +135,25 @@ class _HomeState extends State<Home> {
           border: Border.all(color: Colors.orange,width: 1.4),
           borderRadius: BorderRadius.circular(25)),
       child: Row(
-        children: const [
-          Padding(
+        children: [
+          const Padding(
             padding: EdgeInsets.all(4.0),
             child: Icon(Icons.search,color: Colors.grey),
           ),
-          Center(
+          Container(
+            padding: EdgeInsets.only(top:2,bottom: 2),
+            height: 25,
+            width: 2,
+            color: Colors.orange,
+            margin: EdgeInsets.symmetric(horizontal: 10),
+          ),
+          const Center(
             child: Text("Tìm kiếm món ăn ",
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey,
-              ),),
+              ),
+            ),
           )
         ],
       ),

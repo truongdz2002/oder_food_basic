@@ -2,7 +2,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class RequestpermissionAdrress
+class RequestpermissionAddress
 {
   Future<String> requestPermissionLocal() async {
     String address='';
@@ -17,7 +17,6 @@ class RequestpermissionAdrress
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
-
     // Lấy danh sách các địa điểm dựa trên vị trí đã lấy được
     List<Placemark> placemarks = await placemarkFromCoordinates(
       position.latitude,

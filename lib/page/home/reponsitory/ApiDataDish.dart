@@ -33,4 +33,40 @@ class ApiDataDish{
     });
     return dishList;
   }
+  Future<List<Dish>> getFoodList()
+  async {
+    List<Dish> dishList=[];
+    List<Dish> dishListAll=await getDataDishApi();
+    for(var element in dishListAll) {
+     if(element.type=='food')
+       {
+         dishList.add(element);
+       }
+    }
+    return  dishList;
+  }
+  Future<List<Dish>> getDrinkList()
+  async {
+    List<Dish> dishList=[];
+    List<Dish> dishListAll=await getDataDishApi();
+    for(var element in dishListAll) {
+      if(element.type=='drink')
+      {
+        dishList.add(element);
+      }
+    }
+    return  dishList;
+  }
+  Future<List<Dish>> getDessertList()
+  async {
+    List<Dish> dishList=[];
+    List<Dish> dishListAll=await getDataDishApi();
+    for(var element in dishListAll) {
+      if(element.type=='dessert')
+      {
+        dishList.add(element);
+      }
+    }
+    return  dishList;
+  }
 }

@@ -8,7 +8,7 @@ import 'package:skeletons/skeletons.dart';
 import 'package:intl/intl.dart';
 
 
-import '../../detailDish/reponsitory/view/DishDetail.dart';
+import '../../detailDish/presentation/view/DishDetail.dart';
 class Dishes_find extends StatefulWidget {
   final String textSearched;
    Dishes_find({Key? key,required this.textSearched}) : super(key: key);
@@ -139,9 +139,7 @@ class _Dishes_findState extends State<Dishes_find>  with TickerProviderStateMixi
   Widget Item(Dish e) =>GestureDetector(
     onTap: ()
     {
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>const DishDetail(),settings: RouteSettings(
-          arguments: e
-      ) ));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> DishDetail(e)));
     },
     child: Card(
       child: Padding(

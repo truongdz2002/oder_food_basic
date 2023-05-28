@@ -3,4 +3,7 @@ class AddressUrL{
 
   //Address Get api
   static const String listDish='/apiDish/getDish.php';
+
+  //key SharedPreferences
+  static const String kCartKey = 'cart';
 }
